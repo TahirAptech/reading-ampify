@@ -1,6 +1,6 @@
-const aws = require('aws-sdk');
+const AWS = require('aws-sdk');
 
-const cognitoidentityserviceprovider = new aws.CognitoIdentityServiceProvider({
+const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({
   apiVersion: '2016-04-18',
 });
 

@@ -30,13 +30,13 @@
         "readingAuthenticationPostAuthentication": {
           "modules": "verified-email",
           "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
-          "s3Key": "amplify-builds/readingAuthenticationPostAuthentication-51414c5531566b704d61-build.zip"
+          "s3Key": "amplify-builds/readingAuthenticationPostAuthentication-68756d47366d68724d64-build.zip"
         },
         "readingAuthenticationPostConfirmation": {
           "group": "Reader",
           "modules": "add-to-group,verified-email",
           "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
-          "s3Key": "amplify-builds/readingAuthenticationPostConfirmation-386f723246656a545868-build.zip"
+          "s3Key": "amplify-builds/readingAuthenticationPostConfirmation-35484743747a476e786a-build.zip"
         }
       },
       "api": {

@@ -1,5 +1,11 @@
 {
   "AppSyncApiName": "readingbackend",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authreadingbackend9d8cc82c",
+      "Outputs.UserPoolId"
+    ]
+  }
 }

@@ -4,17 +4,31 @@
 
 
 # AuthorProfile as user
-type AuthorUser @model @auth(rules: [{ allow: public }])
+type AuthorUser @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub", operations: [update, read]}
+])
 {
     id:ID! @primaryKey
-    validated: Boolean @auth(rules: [{ allow: public }])
+    validated: Boolean @auth(rules: [
+        {allow: groups, groups: ["Admin"]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+    ])
     sub: String
     firstName: String
     lastName:String
     birthday: String
     email: AWSEmail
-    accessDocumentation: Boolean @auth(rules: [{ allow: public }])
-    setOtherAuthor: Boolean @auth(rules: [{ allow: public }])
+    accessDocumentation: Boolean @auth(rules: [
+        {allow: groups, groups: ["Admin"]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+    ])
+    setOtherAuthor: Boolean @auth(rules: [
+        {allow: groups, groups: ["Admin"]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+    ])
     unsubscribe: Boolean
     unsubscribeData: AWSJSON
     identity: String
@@ -31,7 +45,15 @@ type AuthorUser @model @auth(rules: [{ allow: public }])
 }
 
 # Author Profile as public
-type Author @model @auth(rules: [{ allow: public }])
+type Author @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+    {allow: groups, groups: ["Author"], operations: [create]}
+    {allow: owner, ownerField: "sub"}
+    # {allow: public, operations: [read]}
+    {allow: public, provider: iam}
+])
 {
     id:ID! @primaryKey
     sub: String
@@ -71,7 +93,13 @@ type S3Object {
 }
 
 # Unpublished book
-type Draft @model @auth(rules: [{ allow: public }])
+type Draft @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Author"], operations: [create]}
+    {allow: owner, ownerField: "sub", operations: [update, read, delete]}
+    {allow: public, provider: iam}
+])
 {
     id: ID! @primaryKey
     sub: String
@@ -130,7 +158,13 @@ enum BookStatus {
     Unpublished
 }
 
-type DraftContent @model @auth(rules: [{ allow: public }])
+type DraftContent @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Author"], operations: [create]}
+    {allow: owner, ownerField: "sub", operations: [update, read, delete]}
+    {allow: public, provider: iam}
+])
 {
     id: ID! @primaryKey
     sub: String
@@ -151,7 +185,14 @@ type DraftContent @model @auth(rules: [{ allow: public }])
 }
 
 # published book
-type Book @model @auth(rules: [{ allow: public }])
+type Book @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+    {allow: owner, ownerField: "sub", operations: [read, update]}
+    # {allow: public, operations: [read]}
+    {allow: public, provider: iam}
+])
 {
     id: ID! @primaryKey
     sub: String
@@ -202,7 +243,13 @@ type Book @model @auth(rules: [{ allow: public }])
 }
 
 # published content
-type BookContent @model @auth(rules: [{ allow: public }])
+type BookContent @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+    {allow: owner, ownerField: "sub", operations: [read]}
+    {allow: public, provider: iam}
+])
 {
     id: ID! @primaryKey
     sub: String
@@ -213,9 +260,24 @@ type BookContent @model @auth(rules: [{ allow: public }])
     freeAudio: String
     freeAudioData: AWSJSON
     adminAudioData: AWSJSON
-    text: String @auth(rules: [{ allow: public }])
-    audio: String @auth(rules: [{ allow: public }])
-    audioData: AWSJSON @auth(rules: [{ allow: public }])
+    text: String @auth(rules: [
+        {allow: groups, groups: ["Admin"], operations: [read, create, update, delete]}
+        {allow: groups, groups: ["Reader"], operations: [create]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+        {allow: public, provider: iam}
+    ])
+    audio: String @auth(rules: [ # deprecated
+        {allow: groups, groups: ["Admin"], operations: [read, create, update, delete]}
+        {allow: groups, groups: ["Reader"], operations: [create]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+        {allow: public, provider: iam}
+    ])
+    audioData: AWSJSON @auth(rules: [
+        {allow: groups, groups: ["Admin"], operations: [read, create, update, delete]}
+        {allow: groups, groups: ["Reader"], operations: [create]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+        {allow: public, provider: iam}
+    ])
     bookID: ID @index(name: "byBook")
     book: Book @belongsTo(fields: ["bookID"])
     draftContentID: ID
@@ -223,7 +285,13 @@ type BookContent @model @auth(rules: [{ allow: public }])
 
 
 # readerProfile as user
-type ReaderUser @model @auth(rules: [{ allow: public }])
+type ReaderUser @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub", operations: [create, update, read]}
+    {allow: public, provider: iam}
+])
 {
     id:ID! @primaryKey
     sub: String
@@ -245,7 +313,12 @@ type ReaderUser @model @auth(rules: [{ allow: public }])
     status: String
     unsubscribe: Boolean
     unsubscribeData: AWSJSON
-    credits: Int @auth(rules: [{ allow: public }])
+    credits: Int @auth(rules: [
+        {allow: groups, groups: ["Admin"]}
+        {allow: groups, groups: ["Reader"], operations: [create]}
+        {allow: owner, ownerField: "sub", operations: [read]}
+        {allow: public, provider: iam}
+    ])
     refills:   [Refill]   @hasMany(indexName: "byReaderUser", fields:["id"])
     purchases: [Purchase] @hasMany(indexName: "byReaderUser", fields:["id"])
     bookLikes: [BookLike] @hasMany(indexName: "byReaderUser", fields:["id"])
@@ -259,7 +332,13 @@ type Token{
     token: String
 }
 
-type Refill @model @auth(rules: [{ allow: public }])
+type Refill @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner,  ownerField: "sub",  operations: [read]}
+    {allow: public, provider: iam}
+])
 {
     id: ID!
     sub: String
@@ -275,13 +354,25 @@ type Refill @model @auth(rules: [{ allow: public }])
     transfered: Boolean
 }
 
-type Purchase @model @auth(rules: [{ allow: public }]) {
+type Purchase @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub", operations: [read]}
+    # {allow: owner, ownerField: "sub",       identityClaim: "readerREF", operations: [create, read]}
+    # {allow: owner, ownerField: "authorSub", identityClaim: "authorREF", operations: [create, read]}
+    {allow: public, provider: iam}
+]) {
     id: ID!
     sub: String
     authorSub: String
     status: PurchaseStatus
     unused: String
-    rating: Int @auth(rules: [{ allow: public }])
+    rating: Int @auth (rules: [
+        {allow: groups, groups: ["Admin"]}
+        {allow: groups, groups: ["Reader"], operations: [create]}
+        {allow: owner, ownerField: "sub", operations: [read, update]}
+    ])
     current: AWSJSON
     result: AWSJSON # in case of fail
     identity: String # identity pool id of the buyer
@@ -309,7 +400,11 @@ enum PurchaseStatus {
 }
 
 # published content
-type PurchasedContent @model @auth(rules: [{ allow: public }])
+type PurchasedContent @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: owner, ownerField: "sub", operations: [read]}
+])
 {
     id: ID! @primaryKey
     sub: String
@@ -325,7 +420,14 @@ type PurchasedContent @model @auth(rules: [{ allow: public }])
     purchase: Purchase @belongsTo(fields: ["purchaseID"])
 }
 
-type BookRating @model @auth(rules: [{ allow: public }])
+type BookRating @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub"}
+    # {allow: owner, ownerField: "sub",       identityClaim: "readerREF", operations: [create, read, delete]}
+    # {allow: owner, ownerField: "authorSub", identityClaim: "authorREF", operations: [read]}
+])
 {
     id: ID!
     sub: String
@@ -339,7 +441,14 @@ type BookRating @model @auth(rules: [{ allow: public }])
     book: Book @belongsTo(fields: ["bookID"])
 }
 
-type BookLike @model @auth(rules: [{ allow: public }])
+type BookLike @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub"}
+    # {allow: owner, ownerField: "sub",       identityClaim: "readerREF", operations: [create, read, delete]}
+    # {allow: owner, ownerField: "authorSub", identityClaim: "authorREF", operations: [read]}
+])
 {
     id: ID!
     sub: String
@@ -354,7 +463,14 @@ type BookLike @model @auth(rules: [{ allow: public }])
     book: Book @belongsTo(fields: ["bookID"])
 }
 
-type FollowAuthor @model @auth(rules: [{ allow: public }])
+type FollowAuthor @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["Reader"], operations: [create]}
+    {allow: owner, ownerField: "sub"}
+    # {allow: owner, ownerField: "sub",       identityClaim: "readerREF", operations: [create, read, delete]}
+    # {allow: owner, ownerField: "authorSub", identityClaim: "authorREF", operations: [read]}
+])
 {
     id: ID!
     sub: String
@@ -367,7 +483,13 @@ type FollowAuthor @model @auth(rules: [{ allow: public }])
     author: Author @belongsTo(fields: ["authorID"])
 }
 
-type NotifyFollower @model @auth(rules: [{ allow: public }])
+type NotifyFollower @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: owner, ownerField: "sub"}
+    # {allow: owner, ownerField: "sub",       identityClaim: "readerREF", operations: [create, read, delete]}
+    # {allow: owner, ownerField: "authorSub", identityClaim: "authorREF", operations: [read]}
+])
 {
     id: ID!
     sub: String
@@ -381,7 +503,11 @@ type NotifyFollower @model @auth(rules: [{ allow: public }])
     book: Book @belongsTo(fields: ["bookID"])
 }
 
-type Payment @model @auth(rules: [{ allow: public }])
+type Payment @model
+@auth (rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: owner, ownerField: "sub", operations: [read]}
+])
 {
     id: ID!
     sub: String #author
@@ -395,7 +521,13 @@ type Payment @model @auth(rules: [{ allow: public }])
     purchases: [Purchase] @hasMany(indexName: "byPayment", fields:["id"])
 }
 
-type Family @model @auth(rules: [{ allow: public }])
+type Family @model
+@auth(rules: [
+    { allow: groups, groups: ["Admin"]}
+    { allow: groups, groups: ["Reader"], operations: [read]}
+    { allow: groups, groups: ["Author"], operations: [read]}
+    # { allow: public, operations: [read]}
+])
 {
     id: ID! @primaryKey
     name: String
@@ -413,7 +545,13 @@ type Family @model @auth(rules: [{ allow: public }])
     subCategories: [SubCategory]  @hasMany(indexName: "byFamily", fields:["id"])
 }
 
-type Category @model @auth(rules: [{ allow: public }])
+type Category @model
+@auth(rules: [
+    { allow: groups, groups: ["Admin"]}
+    { allow: groups, groups: ["Reader"], operations: [read]}
+    { allow: groups, groups: ["Author"], operations: [read]}
+    # { allow: public, operations: [read]}
+])
 {
     id: ID! @primaryKey
     name: String
@@ -430,7 +568,13 @@ type Category @model @auth(rules: [{ allow: public }])
     subCategories: [SubCategory]  @hasMany(indexName: "byCategory", fields:["id"])
 }
 
-type SubCategory @model @auth(rules: [{ allow: public }])
+type SubCategory @model
+@auth(rules: [
+    { allow: groups, groups: ["Admin"]}
+    { allow: groups, groups: ["Reader"], operations: [read]}
+    { allow: groups, groups: ["Author"], operations: [read]}
+    # { allow: public, operations: [read]}
+])
 {
     id: ID! @primaryKey
     name: String
@@ -451,7 +595,13 @@ type SubCategory @model @auth(rules: [{ allow: public }])
 
 #--------------Schema graphql app-education--------------#
 
-type School @model @auth(rules: [{ allow: public }])
+type School @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+])
 {
     id: ID! @primaryKey
     title: String
@@ -465,7 +615,13 @@ type School @model @auth(rules: [{ allow: public }])
 }
 
 
-type SchoolUser @model @auth(rules: [{ allow: public }])
+type SchoolUser @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+	{allow: groups, groups: ["SchoolFounder"]}
+    {allow: owner, ownerField: "sub", operations: [update,read,delete]}
+    {allow: owner, ownerField: "schoolREF", identityClaim: "schoolREF", operations: [update,read,delete]}
+])
 {
     id:ID! @primaryKey
     sub: String
@@ -481,7 +637,13 @@ type SchoolUser @model @auth(rules: [{ allow: public }])
 }
 
 
-type Student @model @auth(rules: [{ allow: public }])
+type Student @model
+@auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+])
 {
     id: ID! @primaryKey
     firstName: String
@@ -499,7 +661,12 @@ type Student @model @auth(rules: [{ allow: public }])
 }
 
 
-type SchoolYear @model  @auth(rules: [{ allow: public }]){
+type SchoolYear @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     title: String
     description: String
@@ -507,7 +674,12 @@ type SchoolYear @model  @auth(rules: [{ allow: public }]){
 }
 
 
-type SchoolSubscription @model @auth(rules: [{ allow: public }]){
+type SchoolSubscription @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     title: String
     amount: String
@@ -520,7 +692,12 @@ type SchoolSubscription @model @auth(rules: [{ allow: public }]){
 }
 
 
-type Teacher @model @auth(rules: [{ allow: public }]){
+type Teacher @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read,create,update]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     firstName: String
     lastName: String
@@ -534,7 +711,12 @@ type Teacher @model @auth(rules: [{ allow: public }]){
 }
 
 
-type StudentGroup @model @auth(rules: [{ allow: public }]){
+type StudentGroup @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"]}
+    {allow: groups, groups: ["Teacher"], operations: [read]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     title: String
     description: String
@@ -544,7 +726,12 @@ type StudentGroup @model @auth(rules: [{ allow: public }]){
 }
 
 
-type Course @model @auth(rules: [{ allow: public }]){
+type Course @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read,create,update]}
+    {allow: groups, groups: ["Teacher"], operations: [read,create,update]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     title: String
     docs: String
@@ -556,7 +743,12 @@ type Course @model @auth(rules: [{ allow: public }]){
 }
 
 
-type LiveCourse @model @auth(rules: [{ allow: public }]){
+type LiveCourse @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read,create,update]}
+    {allow: groups, groups: ["Teacher"], operations: [read,create,update]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     title: String
     dateStart: AWSDate
@@ -569,7 +761,12 @@ type LiveCourse @model @auth(rules: [{ allow: public }]){
 }
 
 
-type ToTeach @model @auth(rules: [{ allow: public }]){
+type ToTeach @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: groups, groups: ["SchoolFounder"], operations: [read,create,update]}
+    {allow: groups, groups: ["Teacher"], operations: [read,create,update]}
+    {allow: groups, groups: ["Reader"], operations: [read]}
+]){
     id: ID! @primaryKey
     status: String
     date: String
@@ -581,7 +778,11 @@ type ToTeach @model @auth(rules: [{ allow: public }]){
 
 #----------Schema graphql commandes services reading--------------#
 #Product
-type Product @model @auth(rules: [{ allow: public }]){
+type Product @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    { allow: public, provider: iam }
+    
+]){
   id: ID! @primaryKey
   title: String
   description: String
@@ -592,7 +793,10 @@ type Product @model @auth(rules: [{ allow: public }]){
   orderLines: [OrderLine] @hasMany(indexName: "byProduct", fields: ["id"])
 }
 #Price
-type Price @model @auth(rules: [{ allow: public }]){
+type Price @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: public, provider: iam}
+]){
   id: ID! @primaryKey
   title: String!
   amount: Int
@@ -601,7 +805,10 @@ type Price @model @auth(rules: [{ allow: public }]){
   product: Product @belongsTo(fields: ["ProductID"])
 }
 #Customer
-type Client @model @auth(rules: [{ allow: public }]){
+type Client @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: public, provider: iam}
+]){
     id: ID! @primaryKey
     firstName: String
     lastName: String
@@ -614,7 +821,10 @@ type Client @model @auth(rules: [{ allow: public }]){
     #updatedOn: AWSDateTime!
 }
 #Order
-type Order @model @auth(rules: [{ allow: public }]){
+type Order @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: public, provider: iam}
+]){
   id: ID! @primaryKey
   title: String
   description: String
@@ -627,7 +837,10 @@ type Order @model @auth(rules: [{ allow: public }]){
   #updatedOn: AWSDateTime!
 }
 #OrderLine
-type OrderLine @model @auth(rules: [{ allow: public }]){
+type OrderLine @model @auth(rules: [
+    {allow: groups, groups: ["Admin"]}
+    {allow: public, provider: iam}
+]){
   id: ID! @primaryKey
   amount: Int
   productID: ID! @index(name: "byProduct")
