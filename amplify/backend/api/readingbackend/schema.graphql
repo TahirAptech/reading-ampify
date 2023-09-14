@@ -1,0 +1,30 @@
+type ReaderUser @model @auth(rules: [{ allow: public }])
+{
+    id:ID! @primaryKey
+    sub: String
+    firstName: String
+    lastName:String
+    avatar: String
+    avatarKeys: String
+    avatarData: AWSJSON
+    birthday: String
+    email: AWSEmail
+    phone: String
+    cellPhone: String
+    # tokens:[Token]
+    gender: String
+    address: String
+    city: String
+    zip: String
+    country: String
+    status: String
+    unsubscribe: Boolean
+    unsubscribeData: AWSJSON
+    credits: Int
+    # refills:   [Refill]   @hasMany(indexName: "byReaderUser", fields:["id"])
+    # purchases: [Purchase] @hasMany(indexName: "byReaderUser", fields:["id"])
+    # bookLikes: [BookLike] @hasMany(indexName: "byReaderUser", fields:["id"])
+    # bookRatings: [BookRating] @hasMany(indexName: "byReaderUser", fields:["id"])
+    # followAuthors: [FollowAuthor] @hasMany(indexName: "byReaderUser", fields:["id"])
+    # notifyFollowers: [NotifyFollower] @hasMany(indexName: "byReaderUser", fields:["id"])
+}

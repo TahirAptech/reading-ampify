@@ -1,0 +1,229 @@
+{
+  "api": {
+    "AdminQueries": {
+      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "readingbackend9d8cc82c"
+        },
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "AdminQueries9f4eca14"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
+    "readingbackend": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "readingbackend9d8cc82c": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [
+          "FACEBOOK",
+          "GOOGLE"
+        ],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "readingbackend9d8cc82c"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
+    }
+  },
+  "function": {
+    "AdminQueries9f4eca14": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "readingbackend9d8cc82c"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "readingAuthenticationPostAuthentication": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "readingAuthenticationPostConfirmation": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "readingAuthenticationPreTokenGeneration": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_AdminQueries9f4eca14_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "AdminQueries9f4eca14"
+        }
+      ]
+    },
+    "AMPLIFY_function_AdminQueries9f4eca14_group": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "AdminQueries9f4eca14"
+        }
+      ]
+    },
+    "AMPLIFY_function_AdminQueries9f4eca14_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "AdminQueries9f4eca14"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostAuthentication_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostAuthentication"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostAuthentication_modules": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostAuthentication"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostAuthentication_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostAuthentication"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostConfirmation_group": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostConfirmation_modules": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPreTokenGeneration_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPreTokenGeneration"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPreTokenGeneration_modules": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPreTokenGeneration"
+        }
+      ]
+    },
+    "AMPLIFY_function_readingAuthenticationPreTokenGeneration_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "readingAuthenticationPreTokenGeneration"
+        }
+      ]
+    }
+  }
+}

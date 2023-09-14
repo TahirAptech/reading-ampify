@@ -1,0 +1,48 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-readingbackend-dev-185524-authRole",
+      "UnauthRoleArn": "arn:aws:iam::230080554084:role/amplify-readingbackend-dev-185524-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::230080554084:role/amplify-readingbackend-dev-185524-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
+      "UnauthRoleName": "amplify-readingbackend-dev-185524-unauthRole",
+      "StackName": "amplify-readingbackend-dev-185524",
+      "StackId": "arn:aws:cloudformation:eu-west-2:230080554084:stack/amplify-readingbackend-dev-185524/31118ae0-523d-11ee-9d45-0aa709d1e9b4",
+      "AmplifyAppId": "d1mwv738lb00pw"
+    },
+    "categories": {
+      "auth": {
+        "readingbackend9d8cc82c": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "AdminQueries9f4eca14": {
+          "group": "Reader",
+          "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
+          "s3Key": "amplify-builds/AdminQueries9f4eca14-76662f5330416f67324c-build.zip"
+        },
+        "readingAuthenticationPreTokenGeneration": {
+          "modules": "alter-claims",
+          "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
+          "s3Key": "amplify-builds/readingAuthenticationPreTokenGeneration-5a6b34316a3772695734-build.zip"
+        },
+        "readingAuthenticationPostAuthentication": {
+          "modules": "verified-email",
+          "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
+          "s3Key": "amplify-builds/readingAuthenticationPostAuthentication-51414c5531566b704d61-build.zip"
+        },
+        "readingAuthenticationPostConfirmation": {
+          "group": "Reader",
+          "modules": "add-to-group,verified-email",
+          "deploymentBucketName": "amplify-readingbackend-dev-185524-deployment",
+          "s3Key": "amplify-builds/readingAuthenticationPostConfirmation-386f723246656a545868-build.zip"
+        }
+      },
+      "api": {
+        "AdminQueries": {},
+        "readingbackend": {}
+      }
+    }
+  }
+}
