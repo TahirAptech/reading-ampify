@@ -223,7 +223,7 @@ type BookContent @model @auth(rules: [{ allow: public }])
 
 
 # readerProfile as user
-type ReaderUser @model @auth(rules: [{ allow: public }])
+type ReaderUser @model @auth(rules: [{ allow: public, operations: [read, create, update] }])
 {
     id:ID! @primaryKey
     sub: String
